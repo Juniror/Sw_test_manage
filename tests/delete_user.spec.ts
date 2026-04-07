@@ -20,6 +20,7 @@ test.describe('Delete User Flow', () => {
     await userListPage.goToUserManagement();
   });
 
+  // NOTE: การลบในปัจจุบันยังไม่ได้ลบข้อมูลใน Database จริง (เป็นเพียงการจำลองใน UI)
   test('Should create and then delete a user successfully', async ({ page }) => {
     const uniqueId = Date.now();
     const targetUser = {

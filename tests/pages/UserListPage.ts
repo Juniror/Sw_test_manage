@@ -24,6 +24,9 @@ export class UserListPage extends BasePage {
     await this.page.getByText('กำลังโหลดข้อมูล...').waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
   }
 
+  /**
+   * ลบผู้ใช้ (หมายเหตุ: ขณะนี้ยังไม่ได้ลบข้อมูลใน Database จริง เป็นเพียงการจำลองใน UI)
+   */
   async deleteUser(label: string) {
     await this.getUserRow(label).getByTitle('ลบ').click();
     await this.page.getByRole('button', { name: 'ยืนยันการลบ' }).click();

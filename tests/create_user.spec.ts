@@ -19,6 +19,7 @@ test.describe('User Management: Create User', () => {
 
   // ─── Positive Scenarios ────────────────────────────────────────────
 
+  // NOTE: ขณะนี้ฟังก์ชัน Delete ยังไม่สามารถลบข้อมูลออกจาก Database ได้จริง (ปุ่มลบใน UI ทำงานแต่ข้อมูลไม่ถูกลบถาวร)
   test.describe('Positive Scenarios: Successful Creation', () => {
     test('Should create and delete a minimum required user', async ({ page }) => {
       const uniqueId = Date.now();
