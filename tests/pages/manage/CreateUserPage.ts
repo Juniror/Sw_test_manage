@@ -1,7 +1,19 @@
-import { Locator, expect } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { Locator, expect, Page } from '@playwright/test';
 
-export class CreateUserPage extends BasePage {
+export interface UserData {
+  username?: string;
+  email?: string;
+  password?: string;
+  displayName?: string;
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  phone?: string;
+  role?: string;
+}
+
+export class CreateUserPage {
+  private readonly page: Page;
   readonly usernameInput: Locator;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
@@ -13,26 +25,26 @@ export class CreateUserPage extends BasePage {
   readonly roleSelect: Locator;
   readonly createButton: Locator;
 
-  constructor(page: any) {
-    super(page);
+  constructor(page: Page) {
+    this.page = page;
 
     this.usernameInput = page.getByPlaceholder('ชื่อผู้ใช้งาน');
     this.emailInput = page.getByPlaceholder('example@email.com');
     this.passwordInput = page.getByPlaceholder('••••••••');
     this.displayNameInput = page.getByPlaceholder('ชื่อเล่นหรือชื่อเรียก');
-    this.firstNameInput = page.getByPlaceholder('First Name');
-    this.lastNameInput = page.getByPlaceholder('Last Name');
-    this.nicknameInput = page.getByPlaceholder('Nickname');
+    this.firstNameInput = page.getByPlaceholder('ชื่อจริง');
+    this.lastNameInput = page.getByPlaceholder('นามสกุล');
+    this.nicknameInput = page.getByPlaceholder('ชื่อเล่น' ,{exact : true});
     this.phoneInput = page.getByPlaceholder('08x-xxx-xxxx');
 
     this.roleSelect = page.locator('select[name="role"]');
     this.createButton = page.getByRole('button', { name: 'สร้างบัญชีผู้ใช้งานใหม่' });
   }
 
-  async fillForm(data: any) {
+  async fillForm(data: UserData) {
     const fill = async (locator: Locator, value?: string) => {
       if (value) {
-        await expect(locator).toBeVisible();
+        await locator.waitFor({ state: 'visible' });
         await locator.fill(value);
       }
     };
@@ -45,7 +57,7 @@ export class CreateUserPage extends BasePage {
     await fill(this.lastNameInput, data.lastName);
     await fill(this.nicknameInput, data.nickname);
     await fill(this.phoneInput, data.phone);
-    
+
     if (data.role) {
       await this.roleSelect.selectOption(data.role);
     }
@@ -58,9 +70,6 @@ export class CreateUserPage extends BasePage {
     });
 
     await this.createButton.click();
-
-    // Wait for redirect back to management page
-    await this.page.waitForURL('**/users/manage**', { timeout: 10000 }).catch(() => {});
-    await this.page.getByText('จัดการบัญชีผู้ใช้').waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    await this.createButton.waitFor({ state: 'hidden' }).catch(() => { });
   }
 }
