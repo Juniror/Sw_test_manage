@@ -1,36 +1,43 @@
-# Playwright Test Suite: Professional Reorganization
+# ชุดทดสอบ Playwright: การจัดการโครงสร้างแบบมืออาชีพ
 
-This project contains a comprehensive end-to-end testing suite for the VPA Site Management application, built with Playwright.
+โปรเจกต์นี้ประกอบด้วยชุดทดสอบ End-to-End (E2E) สำหรับแอปพลิเคชัน **VPA Site Management** โดยใช้ Playwright เป็นเครื่องมือหลัก
 
-## Project Structure
+---
 
-The test suite is organized into logical modules, each subdivided into `positive` and `negative` test groups to ensure clarity and maintainability.
+## 🏗️ โครงสร้างโปรเจกต์ (Project Structure)
 
-### Test Specification Layout (`/tests/specs`)
+ชุดทดสอบนี้ถูกออกแบบมาให้ชัดเจนและง่ายต่อการใช้งาน โดยแบ่งหมวดหมู่การทดสอบออกเป็นกลุ่มที่คาดหวังผลลัพธ์สำเร็จ (Positive) และกลุ่มที่ทดสอบกรณีข้อมูลผิดพลาด (Negative)
 
-- **`positive/`**: Contains "Happy Path" scenarios where operations are expected to succeed. These tests use automated cleanup hooks (`afterEach`) and **Deep Data Verification** to ensure records are not just created, but are 100% accurate.
-- **`negative/`**: Contains validation tests where operations are expected to fail (e.g., missing mandatory fields, invalid data formats).
+### หมวดหมู่การทดสอบ (`/tests/specs`)
 
-### Modules
+| หมวดหมู่ | คำอธิบาย |
+| :--- | :--- |
+| **`positive/`** | ทดสอบกรณีใช้งานปกติ (Happy Path) พร้อมระบบตรวจสอบข้อมูลเชิงลึก |
+| **`negative/`** | ทดสอบกรณีข้อมูลไม่ถูกต้อง หรือลืมกรอกข้อมูลที่จำเป็น |
 
-- **Manage**: User management (CRUD) and administrative permissions.
-- **Employee**: Worker management, including deep field verification (Phone, Position, National ID).
-- **Income & Expenses**: Financial record tracking with robust validation for non-numeric input.
-- **Project**: Site management with **automated project deletion** for a clean dashboard.
-- **Profile**: Current user profile updates with automatic baseline resets.
+---
 
-## Running Tests Like a Pro
+## 📦 โมดูลหลัก (Core Modules)
 
-### Using the Playwright UI (Recommended)
+*   **Manage**: จัดการ User และการกำหนดสิทธิ์ Admin
+*   **Employee**: จัดการข้อมูลพนักงานและรายละเอียดต่างๆ
+*   **Income & Expenses**: จัดการบันทึกรายรับ-รายจ่าย
+*   **Project**: จัดการข้อมูลโปรเจกต์และไซต์งาน
+*   **Profile**: จัดการข้อมูลโปรไฟล์ของผู้ใช้งาน
+
+---
+
+## 🚀 การรันการทดสอบ
+
+หากต้องการรันการทดสอบด้วยโหมด UI เพื่อดูขั้นตอนการทำงานอย่างละเอียด ให้ใช้คำสั่งนี้:
+
 ```bash
 npx playwright test --ui
 ```
-Search for `positive` or `negative` to filter your execution. The tests are designed to be fully independent.
 
-### Powerful Features
-- **Deep Verification**: Tests now go back into individual records to verify that every field saved matches exactly what was entered.
-- **Automated Cleanup**: Specs like `Employee` and `Project` will automatically detect and delete their own "Auto" test data after each run.
-- **Stability Waits**: Core modules now include `networkidle` lifecycle waits to ensure consistent results even on slower connections.
+---
 
-## Local Configuration
-The suite is configured via `playwright.config.ts`. You can find trace results and screenshots for any failed runs in the `test-results/` directory.
+## ⚙️ การตั้งค่าและผลการทดสอบ
+
+*   **ตั้งค่า**: ดูได้ที่ไฟล์ [playwright.config.ts](playwright.config.ts)
+*   **ผลการทดสอบ**: หากรันแล้วล้มเหลว สามารถตรวจสอบภาพหน้าจอและไฟล์ Trace ได้ในโฟลเดอร์ `test-results/`
