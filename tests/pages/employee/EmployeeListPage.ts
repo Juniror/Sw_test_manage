@@ -1,78 +1,86 @@
+import { BasePage } from '../base/BasePage';
 import { Locator, Page, expect } from '@playwright/test';
- 
- /**
-  * EmployeeListPage Object Model.
-  * Handles the listing of employees, navigation to detail/edit, and deletion workflows.
-  */
- export class EmployeeListPage {
-   private readonly page: Page;
+import { MainPage } from '../base/MainPage';
+import { CreateEmployeePage } from './CreateEmployeePage';
+import { EditEmployeePage } from './EditEmployeePage';
+
+ export class EmployeeListPage extends BasePage {
+   
    readonly addEmployeeButton: Locator;
    readonly employeeCards: Locator;
- 
+
    constructor(page: Page) {
-     this.page = page;
+      super(page);
+     
      this.addEmployeeButton = page.getByRole('button', { name: '+ เพิ่มพนักงาน', exact: true });
-     // Relaxed locator: remove 'main' dependency as it's not present on all layouts
+
      this.employeeCards = page.locator('div.rounded-2xl');
    }
- 
-   /**
-    * Retrieves an employee card locator by name.
-    */
-   getEmployeeCard(name: string): Locator {
-     // Use Has+GetByText for precision, using .first() to handle any potential header/footer duplicates
+
+   async getEmployeeCard(name: string): Promise<Locator> {
+     const mainPage = new MainPage(this.page);
+     await mainPage.waitForLoading();
+     
+     // Ensure the container is present and at least one card exists before filtering
+     await this.employeeCards.first().waitFor({ state: 'visible', timeout: 30000 });
+     
      return this.employeeCards.filter({ has: this.page.getByText(name, { exact: true }) }).first();
    }
- 
-   /**
-    * Navigates to the employee creation form.
-    */
-   async openCreateForm() {
-     await this.addEmployeeButton.waitFor({ state: 'visible' });
+
+     async openCreateForm(): Promise<CreateEmployeePage> {
+
+       await this.waitForLoading();
+await this.addEmployeeButton.waitFor({ state: 'visible' });
      await this.addEmployeeButton.click();
+     return new CreateEmployeePage(this.page);
    }
- 
-   /**
-    * Navigates to the edit form for a specific employee.
-    */
-   async openEditForm(name: string) {
-     const card = this.getEmployeeCard(name);
+
+     async openEditForm(name: string): Promise<EditEmployeePage> {
+
+       await this.waitForLoading();
+const card = await this.getEmployeeCard(name);
      await card.waitFor({ state: 'visible' });
-     // Target the record actions within the card
-     await card.locator('button').filter({ has: this.page.locator('svg') }).first().click(); 
+
+     await card.locator('button').filter({ has: this.page.locator('svg') }).first().click();
+     return new EditEmployeePage(this.page);
    }
- 
-   /**
-    * Navigates to the employee detail view.
-    */
-   async viewEmployeeDetail(name: string) {
-     const card = this.getEmployeeCard(name);
+
+     async viewEmployeeDetail(name: string) {
+
+       await this.waitForLoading();
+const card = await this.getEmployeeCard(name);
      await card.waitFor({ state: 'visible' });
      await card.click();
    }
- 
-   /**
-    * Performs an atomic delete of an employee record with confirmation.
-    */
-   async deleteEmployee(name: string) {
-     const card = this.getEmployeeCard(name);
-     await card.waitFor({ state: 'visible' });
-     
-     // Trigger bin icon (usually the last button in the actions group)
-     await card.getByRole('button').last().click(); 
- 
-     // Handle Popup
-     const confirmButton = this.page.getByRole('button', { name: 'ยืนยันการลบ', exact: true });
-     await confirmButton.waitFor({ state: 'visible' });
-     await confirmButton.click();
-   }
- 
-   /**
-    * Verifies an employee is in the list.
-    */
-   async expectEmployeeInList(name: string) {
-     const card = this.getEmployeeCard(name);
-     // Use a shorter timeout or explicit wait to confirm visibility
+
+  async clickDeleteBtn(name: string) {
+    await this.waitForLoading();
+    const card = await this.getEmployeeCard(name);
+    await card.waitFor({ state: 'visible' });
+
+    // The delete button is the second button in the card (usually after the edit button)
+    // We target the button containing an SVG that is NOT the first one
+    await card.getByRole('button').filter({ has: this.page.locator('svg') }).nth(1).click();
+  }
+
+  async deleteEmployee(name: string) {
+    await this.clickDeleteBtn(name);
+
+    // The site uses a custom Tailwind modal, not standard SweetAlert2
+    const confirmButton = this.page.getByRole('button', { name: 'ยืนยันการลบ', exact: true });
+    await confirmButton.waitFor({ state: 'visible' });
+    await confirmButton.click();
+    
+    // Wait for the modal to disappear
+    await expect(confirmButton).not.toBeVisible();
+    await this.waitForLoading();
+  }
+
+     async expectEmployeeInList(name: string) {
+
+       await this.waitForLoading();
+const card = await this.getEmployeeCard(name);
+
      await expect(card).toBeVisible({ timeout: 15000 });
    }
  }

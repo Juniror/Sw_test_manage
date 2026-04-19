@@ -1,13 +1,18 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../../pages/base/MainPage';
-import { EditProfilePage } from '../../../pages/profile/EditProfilePage';
+import { MainPage } from '../../pages/base/MainPage';
+import { LoginPage } from '../../pages/base/LoginPage';
+import { EditProfilePage } from '../../pages/profile/EditProfilePage';
 
-test.describe('Profile › Validation', () => {
+test.describe('Profile › Validation › Constraints', () => {
   let mainPage: MainPage;
+  let loginPage: LoginPage;
   let profilePage: EditProfilePage;
 
   test.beforeEach(async ({ page }) => {
     mainPage = new MainPage(page);
+    loginPage = new LoginPage(page);
+    await loginPage.navigate();
+    await loginPage.login();
     profilePage = new EditProfilePage(page);
 
     await mainPage.navigate();
@@ -16,16 +21,16 @@ test.describe('Profile › Validation', () => {
   });
 
   test.afterEach(async () => {
-    // Reset page navigation for state isolation between validation attempts
+    await loginPage.navigate();
+    await loginPage.login();
     await mainPage.navigate();
   });
 
-  test('Error › Missing First Name › Browser Blocks', async ({ page }) => {
-    // Attempt to save an incomplete profile by clearing required metadata
+  test('Update › Missing First Name › Native Error', async ({ page }) => {
+    test.fail(true,"เมื่อ firstname เป็น \"\" ระบบไม่แสดงข้อความแจ้งเตือน");
     await profilePage.firstNameInput.clear();
     await profilePage.saveButton.click();
 
-    // Verify presence of HTML5 native required attribute violation
     const validationMessage = await profilePage.firstNameInput.evaluate((el: HTMLInputElement) => el.validationMessage);
     expect(validationMessage).toBeTruthy();
   });

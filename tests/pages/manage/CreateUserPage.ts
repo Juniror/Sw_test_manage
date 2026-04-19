@@ -1,3 +1,4 @@
+import { BasePage } from '../base/BasePage';
 import { Locator, expect, Page } from '@playwright/test';
 
 export interface UserData {
@@ -10,10 +11,11 @@ export interface UserData {
   nickname?: string;
   phone?: string;
   role?: string;
+  statusLabel?: string; // e.g. 'ใช้งาน', 'ระงับการใช้งาน'
 }
 
-export class CreateUserPage {
-  private readonly page: Page;
+export class CreateUserPage extends BasePage {
+  
   readonly usernameInput: Locator;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
@@ -26,24 +28,29 @@ export class CreateUserPage {
   readonly createButton: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
 
-    this.usernameInput = page.getByPlaceholder('ชื่อผู้ใช้งาน');
-    this.emailInput = page.getByPlaceholder('example@email.com');
-    this.passwordInput = page.getByPlaceholder('••••••••');
-    this.displayNameInput = page.getByPlaceholder('ชื่อเล่นหรือชื่อเรียก');
-    this.firstNameInput = page.getByPlaceholder('ชื่อจริง');
-    this.lastNameInput = page.getByPlaceholder('นามสกุล');
-    this.nicknameInput = page.getByPlaceholder('ชื่อเล่น' ,{exact : true});
-    this.phoneInput = page.getByPlaceholder('08x-xxx-xxxx');
+    // Hybrid locators for robust selection in Create Mode
+    this.usernameInput = page.getByLabel(/Username/).or(page.getByPlaceholder('ชื่อผู้ใช้งาน'));
+    this.emailInput = page.getByLabel(/Email/).or(page.getByPlaceholder('example@email.com'));
+    this.passwordInput = page.getByLabel(/Password/).or(page.getByPlaceholder('••••••••'));
+    
+    this.displayNameInput = page.getByLabel(/ชื่อที่แสดง/).or(page.getByPlaceholder('ชื่อเล่นหรือชื่อเรียก'));
+    this.firstNameInput = page.getByLabel('ชื่อจริง').or(page.getByPlaceholder('ชื่อจริง'));
+    this.lastNameInput = page.getByLabel('นามสกุล').or(page.getByPlaceholder('นามสกุล'));
+    this.nicknameInput = page.getByLabel('ชื่อเล่น', { exact: true }).or(page.getByPlaceholder('ชื่อเล่น', { exact: true }));
+    
+    this.phoneInput = page.getByLabel('เบอร์โทรศัพท์').or(page.getByPlaceholder('08x-xxx-xxxx'));
 
-    this.roleSelect = page.locator('select[name="role"]');
+    this.roleSelect = page.getByLabel('บทบาทผู้ใช้งาน').or(page.locator('select[name="role"]'));
     this.createButton = page.getByRole('button', { name: 'สร้างบัญชีผู้ใช้งานใหม่' });
   }
 
   async fillForm(data: UserData) {
+    await this.waitForLoading();
+
     const fill = async (locator: Locator, value?: string) => {
-      if (value) {
+      if (value !== undefined) {
         await locator.waitFor({ state: 'visible' });
         await locator.fill(value);
       }
@@ -64,12 +71,13 @@ export class CreateUserPage {
   }
 
   async submit() {
-    // Listen for the success dialog before clicking
+    await this.waitForLoading();
+    // Handle the platform's confirmation dialog
     this.page.once('dialog', async dialog => {
       await dialog.accept();
     });
 
     await this.createButton.click();
-    await this.createButton.waitFor({ state: 'hidden' }).catch(() => { });
+    await this.waitForLoading();
   }
 }

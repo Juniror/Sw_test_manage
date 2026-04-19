@@ -1,31 +1,25 @@
+import { BasePage } from '../base/BasePage';
 import { Locator, Page } from '@playwright/test';
- 
- /**
-  * IncomeListPage Object Model.
-  * Handles interactions on the income listing page.
-  */
- export class IncomeListPage {
-   private readonly page: Page;
-   readonly recordIncomeButton: Locator;
- 
-   constructor(page: Page) {
-     this.page = page;
-     // Priority 1: getByRole with accessible name
-     this.recordIncomeButton = page.getByRole('button', { name: 'บันทึกรายรับ', exact: true });
-   }
- 
-   /**
-    * Opens the form to record new income.
-    */
-   async openRecordForm() {
-     await this.recordIncomeButton.waitFor({ state: 'visible' });
-     await this.recordIncomeButton.click();
-   }
- 
-   /**
-    * Navigates to the Income section (secondary navigation fallback).
-    */
-   async navigateToIncome() {
-     await this.page.getByRole('button', { name: 'รายรับ', exact: true }).click();
-   }
- }
+
+export class IncomeListPage extends BasePage {
+  readonly recordIncomeButton: Locator;
+
+  constructor(page: Page) {
+    super(page);
+    this.recordIncomeButton = page.getByRole('button', { name: 'บันทึกรายรับ', exact: true });
+  }
+
+  async openRecordForm() {
+    await this.waitForLoading();
+    await this.recordIncomeButton.waitFor({ state: 'visible' });
+    await this.recordIncomeButton.click();
+  }
+
+  async navigateToIncome() {
+    await this.waitForLoading();
+    const btn = this.page.getByRole('button', { name: 'รายรับ', exact: true });
+    await btn.waitFor({ state: 'visible' });
+    await btn.click();
+    await this.waitForLoading();
+  }
+}

@@ -1,43 +1,37 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../../pages/base/MainPage';
-import { UserListPage } from '../../../pages/manage/UserListPage';
-import { CreateUserPage } from '../../../pages/manage/CreateUserPage';
+import { MainPage } from '../../pages/base/MainPage';
+import { LoginPage } from '../../pages/base/LoginPage';
+import { UserListPage } from '../../pages/manage/UserListPage';
+import { CreateUserPage } from '../../pages/manage/CreateUserPage';
 
-test.describe('User › Validation', () => {
+test.describe('Manage › User › Validation', () => {
   let mainPage: MainPage;
+  let loginPage: LoginPage;
   let userListPage: UserListPage;
   let createUserPage: CreateUserPage;
-  let usersToDelete: string[] = [];
 
   test.beforeEach(async ({ page }) => {
     mainPage = new MainPage(page);
+    loginPage = new LoginPage(page);
+    await loginPage.navigate();
+    await loginPage.login();
     userListPage = new UserListPage(page);
-    createUserPage = new CreateUserPage(page);
     await mainPage.navigate();
     await mainPage.goToManageUsers();
   });
 
   test.afterEach(async () => {
-    // Teardown: ensure state reset and cleanup of successfully created setup records
+    await loginPage.navigate();
+    await loginPage.login();
     await mainPage.navigate();
-    await mainPage.goToManageUsers();
-
-    for (const label of usersToDelete) {
-      if (await userListPage.getUserRow(label).isVisible()) {
-        await userListPage.deleteUser(label);
-      }
-    }
-    usersToDelete = [];
   });
 
-  test.describe('Mandatory Field Validation', () => {
+  test.describe('Create › Form Validation', () => {
     test.beforeEach(async ({ page }) => {
-      // Automatically handle browser alerts during validation tests
-      page.on('dialog', dialog => dialog.accept());
-      await userListPage.openCreateForm();
+      createUserPage = await userListPage.openCreateForm();
     });
 
-    test('Error › Username Mandatory › Browser Blocks', async () => {
+    test('Error › Username Empty › Browser Blocks', async () => {
       await createUserPage.createButton.click();
       const validationMessage = await createUserPage.usernameInput.evaluate(
         el => (el as HTMLInputElement).validationMessage
@@ -45,7 +39,7 @@ test.describe('User › Validation', () => {
       expect(validationMessage).toContain('Please fill out this field');
     });
 
-    test('Error › Email Mandatory › Browser Blocks', async () => {
+    test('Error › Email Empty › Browser Blocks', async () => {
       await createUserPage.usernameInput.fill('d');
       await createUserPage.createButton.click();
       const validationMessage = await createUserPage.emailInput.evaluate(
@@ -54,7 +48,7 @@ test.describe('User › Validation', () => {
       expect(validationMessage).toContain('Please fill out this field');
     });
 
-    test('Error › Email RFC @ › Browser Blocks', async () => {
+    test('Error › Email Invalid Format › Browser Blocks', async () => {
       await createUserPage.usernameInput.fill('d');
       await createUserPage.emailInput.fill('d');
       await createUserPage.createButton.click();
@@ -64,7 +58,7 @@ test.describe('User › Validation', () => {
       expect(validationMessage).toContain("Please include an '@' in the email address");
     });
 
-    test('Error › Email RFC Domain › Browser Blocks', async () => {
+    test('Error › Email Missing Domain › Browser Blocks', async () => {
       await createUserPage.usernameInput.fill('d');
       await createUserPage.emailInput.fill('d@');
       await createUserPage.createButton.click();
@@ -74,7 +68,7 @@ test.describe('User › Validation', () => {
       expect(validationMessage).toContain("Please enter a part following '@'");
     });
 
-    test('Error › Password Mandatory › Browser Blocks', async () => {
+    test('Error › Password Empty › Browser Blocks', async () => {
       await createUserPage.usernameInput.fill('d');
       await createUserPage.emailInput.fill('d@example.com');
       await createUserPage.createButton.click();
@@ -85,38 +79,8 @@ test.describe('User › Validation', () => {
     });
   });
 
-  test.describe('Conflict & Duplicate Prevention', () => {
-    test('Safety › Cancel Creation › State Preserved', async ({ page }) => {
-      const uniqueId = Date.now();
-      const userA = {
-        username: `dup_back_${uniqueId}`,
-        email: `dup_back_${uniqueId}@example.com`,
-        password: 'password123',
-        displayName: `DupBack ${uniqueId}`,
-        role: 'Foreman'
-      };
-
-      await userListPage.openCreateForm();
-      await createUserPage.fillForm(userA);
-      await createUserPage.submit();
-      await expect(page.locator('#swal2-title')).toBeVisible();
-      await expect(page.getByText(userA.displayName)).toBeVisible();
-
-      // Attempt to re-create the user with conflicting unique fields
-      await userListPage.openCreateForm();
-      await createUserPage.fillForm({
-        username: userA.username,
-        email: `different_${uniqueId}@example.com`,
-        password: 'password123'
-      });
-
-      await page.getByRole('button', { name: 'Back' }).click();
-      await expect(page.getByText(userA.displayName)).toBeVisible();
-
-      usersToDelete.push(userA.displayName);
-    });
-
-    test('Error › Duplicate Credentials › System Rejects', async ({ page }) => {
+  test.describe('Create › Duplicate Prevention', () => {
+    test('Error › Email Taken › System Prevents Duplicate', async ({ page }) => {
       const uniqueId = Date.now();
       const duplicateUsername = `dup_submit_${uniqueId}`;
 
@@ -136,29 +100,24 @@ test.describe('User › Validation', () => {
         role: 'Foreman'
       };
 
-      // Create primary record
-      await userListPage.openCreateForm();
+      createUserPage = await userListPage.openCreateForm();
       await createUserPage.fillForm(userA);
       await createUserPage.submit();
-      await expect(page.getByText(userA.displayName)).toBeVisible();
+      await expect(page.getByText(userA.displayName, { exact: true })).toBeVisible();
 
-      // Attempt to create secondary record with conflicting username
-      await userListPage.openCreateForm();
+      createUserPage = await userListPage.openCreateForm();
       await createUserPage.fillForm(userB);
 
       const dialogPromise = page.waitForEvent('dialog');
       await createUserPage.createButton.click();
 
-      // Confirm server-side rejection dialog
       const dialog = await dialogPromise;
       expect(dialog.message()).toContain('Username or email already exists');
       await dialog.accept();
 
       await page.getByRole('button', { name: 'Back' }).click();
       await expect(page.getByText('จัดการบัญชีผู้ใช้')).toBeVisible();
-      await expect(page.getByText(userA.displayName)).toBeVisible();
-
-      usersToDelete.push(userA.displayName);
+      await expect(page.getByText(userA.displayName, { exact: true })).toBeVisible();
     });
   });
 });

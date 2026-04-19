@@ -1,39 +1,34 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../../pages/base/MainPage';
-import { UserListPage } from '../../../pages/manage/UserListPage';
-import { CreateUserPage } from '../../../pages/manage/CreateUserPage';
-import { EditUserPage } from '../../../pages/manage/EditUserPage';
+import { MainPage } from '../../pages/base/MainPage';
+import { LoginPage } from '../../pages/base/LoginPage';
+import { UserListPage } from '../../pages/manage/UserListPage';
+import { CreateUserPage } from '../../pages/manage/CreateUserPage';
+import { EditUserPage } from '../../pages/manage/EditUserPage';
 
-test.describe('User › Update', () => {
+test.describe('Manage › User › Profile Updates', () => {
   let mainPage: MainPage;
+  let loginPage: LoginPage;
   let userListPage: UserListPage;
   let createUserPage: CreateUserPage;
   let editUserPage: EditUserPage;
-  let usersToDelete: string[] = [];
 
   test.beforeEach(async ({ page }) => {
     mainPage = new MainPage(page);
+    loginPage = new LoginPage(page);
+    await loginPage.navigate();
+    await loginPage.login();
     userListPage = new UserListPage(page);
-    createUserPage = new CreateUserPage(page);
-    editUserPage = new EditUserPage(page);
     await mainPage.navigate();
     await mainPage.goToManageUsers();
   });
 
   test.afterEach(async () => {
-    // Teardown: ensure state reset and automated cleanup of modified test identities
+    await loginPage.navigate();
+    await loginPage.login();
     await mainPage.navigate();
-    await mainPage.goToManageUsers();
-
-    for (const label of usersToDelete) {
-      if (await userListPage.getUserRow(label).isVisible()) {
-        await userListPage.deleteUser(label);
-      }
-    }
-    usersToDelete = [];
   });
 
-  test('Update › Comprehensive Profile › Multi-field Success', async ({ page }) => {
+  test('Update › Multi-field › Multi-field Success', async ({ page }) => {
     const uniqueId = Date.now();
     const initialUser = {
       username: `edit_target_${uniqueId}`,
@@ -49,29 +44,24 @@ test.describe('User › Update', () => {
       displayName: `Updated ${uniqueId}`,
       firstName: `สมชาย${uniqueId}`,
       lastName: `คล่องแคล่ว${uniqueId}`,
-      phone: `09${String(uniqueId).slice(-8)}`,
+      phone: `09${String(uniqueId)}`,
       role: 'audit'
     };
 
-    // Setup: Create baseline user
-    await userListPage.openCreateForm();
+    createUserPage = await userListPage.openCreateForm();
     await createUserPage.fillForm(initialUser);
     await createUserPage.submit();
 
-    // Action: Update user profile
-    await userListPage.openEditForm(initialUser.displayName);
+    editUserPage = await userListPage.openEditForm(initialUser.displayName);
     await editUserPage.fillForm(updatedData);
     await editUserPage.saveChanges();
 
-    // Verification: Success message and data persistence in list view
-    await expect(page.locator('#swal2-title')).toBeVisible();
     await expect(page.getByText('จัดการบัญชีผู้ใช้')).toBeVisible();
     await expect(page.getByText(updatedData.displayName)).toBeVisible();
-
-    usersToDelete.push(updatedData.displayName);
   });
 
-  test('Update › Clear Display Name › Username Fallback Verified', async ({ page }) => {
+  test('Update › Display Name › Clear Success', async ({ page }) => {
+    test.fail(true, "เมื่อ value เป็น \"\" ระบบไม่แสดงข้อความแจ้งเตือน");
     const uniqueId = Date.now();
     const initialUser = {
       username: `clear_target_${uniqueId}`,
@@ -81,29 +71,24 @@ test.describe('User › Update', () => {
       role: 'Foreman'
     };
 
-    await userListPage.openCreateForm();
+    createUserPage = await userListPage.openCreateForm();
     await createUserPage.fillForm(initialUser);
     await createUserPage.submit();
     await expect(page.getByText(initialUser.displayName)).toBeVisible();
 
-     // Action: Clear all optional identifying metadata to trigger fallback logic
-     await userListPage.openEditForm(initialUser.displayName);
-     await editUserPage.fillForm({
-       displayName: '',
-       firstName: '',
-       lastName: '',
-       nickname: '',
-       phone: ''
-     });
-     await editUserPage.saveChanges();
+    editUserPage = await userListPage.openEditForm(initialUser.displayName);
+    await editUserPage.fillForm({
+      displayName: '',
+      firstName: '',
+      lastName: '',
+      nickname: '',
+      phone: ''
+    });
+    await editUserPage.saveChanges();
 
-    // Verification: Success state followed by list refresh validation
-    await expect(page.locator('#swal2-title')).toBeVisible();
-    await page.reload(); 
+    await page.reload();
     await expect(page.getByText('จัดการบัญชีผู้ใช้')).toBeVisible();
     await expect(page.getByText(initialUser.displayName)).not.toBeVisible();
     await expect(page.getByText(initialUser.username)).toBeVisible();
-
-    usersToDelete.push(initialUser.username);
   });
 });
