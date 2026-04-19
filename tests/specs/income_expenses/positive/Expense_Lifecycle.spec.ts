@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { ExpenseListPage } from '../../pages/income_expenses/ExpenseListPage';
-import { ExpenseFormPage } from '../../pages/income_expenses/ExpenseFormPage';
-import { ProjectFormPage } from '../../pages/project/ProjectFormPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { ExpenseListPage } from '../../../pages/income_expenses/ExpenseListPage';
+import { ExpenseFormPage } from '../../../pages/income_expenses/ExpenseFormPage';
+import { ProjectFormPage } from '../../../pages/project/ProjectFormPage';
 
 test.describe('Financial › Expense › Lifecycle', () => {
     let mainPage: MainPage;

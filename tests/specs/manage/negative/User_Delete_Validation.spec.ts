@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { MainPage } from '../../pages/base/MainPage';
-import { UserListPage } from '../../pages/manage/UserListPage';
-import { CreateUserPage } from '../../pages/manage/CreateUserPage';
-import { EditUserPage } from '../../pages/manage/EditUserPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { UserListPage } from '../../../pages/manage/UserListPage';
+import { CreateUserPage } from '../../../pages/manage/CreateUserPage';
+import { EditUserPage } from '../../../pages/manage/EditUserPage';
 
 test.describe('Manage › User › Safety', () => {
   let loginPage: LoginPage;

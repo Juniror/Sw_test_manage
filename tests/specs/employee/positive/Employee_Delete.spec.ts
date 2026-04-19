@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { EmployeeListPage } from '../../pages/employee/EmployeeListPage';
-import { CreateEmployeePage } from '../../pages/employee/CreateEmployeePage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { EmployeeListPage } from '../../../pages/employee/EmployeeListPage';
+import { CreateEmployeePage } from '../../../pages/employee/CreateEmployeePage';
 
 test.describe('Employee › Lifecycle › Deletion', () => {
   let mainPage: MainPage;

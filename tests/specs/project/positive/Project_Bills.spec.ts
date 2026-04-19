@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { ProjectPage } from '../../pages/project/ProjectPage';
-import { ProjectFormPage } from '../../pages/project/ProjectFormPage';
-import { EditProjectPage } from '../../pages/project/EditProjectPage';
-import { ExpenseFormPage } from '../../pages/income_expenses/ExpenseFormPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { ProjectPage } from '../../../pages/project/ProjectPage';
+import { ProjectFormPage } from '../../../pages/project/ProjectFormPage';
+import { EditProjectPage } from '../../../pages/project/EditProjectPage';
+import { ExpenseFormPage } from '../../../pages/income_expenses/ExpenseFormPage';
 
 test.describe('Project › Management › Financials', () => {
   let mainPage: MainPage;

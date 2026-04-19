@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { ProjectPage } from '../../pages/project/ProjectPage';
-import { ProjectFormPage } from '../../pages/project/ProjectFormPage';
-import { EditProjectPage } from '../../pages/project/EditProjectPage';
-import { ProjectHistoryPage } from '../../pages/project/ProjectHistoryPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { ProjectPage } from '../../../pages/project/ProjectPage';
+import { ProjectFormPage } from '../../../pages/project/ProjectFormPage';
+import { EditProjectPage } from '../../../pages/project/EditProjectPage';
+import { ProjectHistoryPage } from '../../../pages/project/ProjectHistoryPage';
 
 test.describe('Project › History › Visual Flow', () => {
   let mainPage: MainPage;

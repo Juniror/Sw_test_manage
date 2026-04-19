@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { IncomeListPage } from '../../pages/income_expenses/IncomeListPage';
-import { IncomeFormPage } from '../../pages/income_expenses/IncomeFormPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { IncomeListPage } from '../../../pages/income_expenses/IncomeListPage';
+import { IncomeFormPage } from '../../../pages/income_expenses/IncomeFormPage';
 
 test.describe('Financial › Income › Management', () => {
   let mainPage: MainPage;

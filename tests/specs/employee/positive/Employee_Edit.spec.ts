@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { EmployeeListPage } from '../../pages/employee/EmployeeListPage';
-import { CreateEmployeePage } from '../../pages/employee/CreateEmployeePage';
-import { EditEmployeePage } from '../../pages/employee/EditEmployeePage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { EmployeeListPage } from '../../../pages/employee/EmployeeListPage';
+import { CreateEmployeePage } from '../../../pages/employee/CreateEmployeePage';
+import { EditEmployeePage } from '../../../pages/employee/EditEmployeePage';
 
 test.describe('Employee › Update Settings', () => {
   let mainPage: MainPage;

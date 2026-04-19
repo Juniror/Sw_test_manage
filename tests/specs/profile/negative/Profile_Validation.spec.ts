@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { EditProfilePage } from '../../pages/profile/EditProfilePage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { EditProfilePage } from '../../../pages/profile/EditProfilePage';
 
 test.describe('Profile › Validation › Constraints', () => {
   let mainPage: MainPage;

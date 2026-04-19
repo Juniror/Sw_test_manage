@@ -1,32 +1,35 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { IncomeListPage } from '../../pages/income_expenses/IncomeListPage';
-import { IncomeFormPage } from '../../pages/income_expenses/IncomeFormPage';
-import { ExpenseListPage } from '../../pages/income_expenses/ExpenseListPage';
-import { ExpenseFormPage } from '../../pages/income_expenses/ExpenseFormPage';
-import { ProjectFormPage } from '../../pages/project/ProjectFormPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { IncomeListPage } from '../../../pages/income_expenses/IncomeListPage';
+import { IncomeFormPage } from '../../../pages/income_expenses/IncomeFormPage';
+import { ProjectFormPage } from '../../../pages/project/ProjectFormPage';
+import { ExpenseFormPage } from '../../../pages/income_expenses/ExpenseFormPage';
 
 test.describe('Financial › Validation', () => {
   let mainPage: MainPage;
   let loginPage: LoginPage;
   let incomeList: IncomeListPage;
   let incomeForm: IncomeFormPage;
-  let expenseList: ExpenseListPage;
-  let expenseForm: ExpenseFormPage;
   let projectForm: ProjectFormPage;
+  let expenseForm: ExpenseFormPage;
 
   test.beforeEach(async ({ page }) => {
     mainPage = new MainPage(page);
     loginPage = new LoginPage(page);
-    await loginPage.navigate();
-    await loginPage.login();
     incomeList = new IncomeListPage(page);
     incomeForm = new IncomeFormPage(page);
-    expenseList = new ExpenseListPage(page);
-    expenseForm = new ExpenseFormPage(page);
     projectForm = new ProjectFormPage(page);
+    expenseForm = new ExpenseFormPage(page);
 
+    await loginPage.navigate();
+    await loginPage.login();
+    await mainPage.navigate();
+  });
+
+  test.afterEach(async () => {
+    await loginPage.navigate();
+    await loginPage.login();
     await mainPage.navigate();
   });
 

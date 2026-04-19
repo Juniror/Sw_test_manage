@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { UserListPage } from '../../pages/manage/UserListPage';
-import { CreateUserPage } from '../../pages/manage/CreateUserPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { UserListPage } from '../../../pages/manage/UserListPage';
+import { CreateUserPage } from '../../../pages/manage/CreateUserPage';
 
 test.describe('Manage › User › Lifecycle Teardown', () => {
   let mainPage: MainPage;

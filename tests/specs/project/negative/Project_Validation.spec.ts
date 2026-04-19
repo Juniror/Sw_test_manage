@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { ProjectFormPage } from '../../pages/project/ProjectFormPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { ProjectFormPage } from '../../../pages/project/ProjectFormPage';
 
 test.describe('Project › Validation › Form Constraints', () => {
   let mainPage: MainPage;

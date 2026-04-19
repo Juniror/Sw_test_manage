@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { ProjectPage } from '../../pages/project/ProjectPage';
-import { ProjectFormPage } from '../../pages/project/ProjectFormPage';
-import { EditProjectPage } from '../../pages/project/EditProjectPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { ProjectPage } from '../../../pages/project/ProjectPage';
+import { ProjectFormPage } from '../../../pages/project/ProjectFormPage';
+import { EditProjectPage } from '../../../pages/project/EditProjectPage';
 
 test.describe('Project › Management', () => {
   let mainPage: MainPage;

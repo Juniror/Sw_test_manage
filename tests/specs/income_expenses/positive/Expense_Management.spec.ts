@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { ExpenseListPage } from '../../pages/income_expenses/ExpenseListPage';
-import { ExpenseFormPage } from '../../pages/income_expenses/ExpenseFormPage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { ExpenseListPage } from '../../../pages/income_expenses/ExpenseListPage';
+import { ExpenseFormPage } from '../../../pages/income_expenses/ExpenseFormPage';
 
 test.describe('Financial › Expense › History', () => {
     let mainPage: MainPage;
@@ -30,7 +30,8 @@ test.describe('Financial › Expense › History', () => {
 
     test('Navigation › Clearance History › Table Visible', async ({ page }) => {
         await expenseList.navigateToBillHistory();
- await expect(page.getByText('ประวัติรายละเอียดบิล')).toBeVisible();    });
+        await expect(page.getByText('ประวัติรายละเอียดบิล')).toBeVisible();
+    });
 
     test('Navigation › Pending Queue › Content Loaded', async ({ page }) => {
         await expenseList.navigateToPendingBills();

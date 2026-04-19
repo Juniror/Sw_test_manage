@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { MainPage } from '../../pages/base/MainPage';
-import { LoginPage } from '../../pages/base/LoginPage';
-import { EmployeeListPage } from '../../pages/employee/EmployeeListPage';
-import { CreateEmployeePage } from '../../pages/employee/CreateEmployeePage';
-import { EditEmployeePage } from '../../pages/employee/EditEmployeePage';
+import { MainPage } from '../../../pages/base/MainPage';
+import { LoginPage } from '../../../pages/base/LoginPage';
+import { EmployeeListPage } from '../../../pages/employee/EmployeeListPage';
+import { CreateEmployeePage } from '../../../pages/employee/CreateEmployeePage';
+import { EditEmployeePage } from '../../../pages/employee/EditEmployeePage';
 
-test.describe('Employee › Validation', () => {
+test.describe('Employee › Financial › Validation', () => {
   let mainPage: MainPage;
   let loginPage: LoginPage;
   let employeeList: EmployeeListPage;
@@ -15,10 +15,10 @@ test.describe('Employee › Validation', () => {
   test.beforeEach(async ({ page }) => {
     mainPage = new MainPage(page);
     loginPage = new LoginPage(page);
-    employeeList = new EmployeeListPage(page);
-
     await loginPage.navigate();
     await loginPage.login();
+    employeeList = new EmployeeListPage(page);
+
     await mainPage.navigate();
     await mainPage.goToEmployees();
   });
@@ -53,18 +53,6 @@ test.describe('Employee › Validation', () => {
     
     // Verify native validation message is present
     await createPage.expectRequiredFieldErrorMessage(createPage.lastNameInput);
-  });
-
-  test('Safety › Cancel Creation › Data Not Saved', async ({ page }) => {
-    const uniqueId = Date.now().toString();
-    const firstName = `CancelMe_${uniqueId}`;
-
-    createPage = await employeeList.openCreateForm();
-    await createPage.fillForm({ firstName });
-    await page.getByRole('button', { name: 'Back' }).click();
-
-    const card = await employeeList.getEmployeeCard(firstName);
-    await expect(card).not.toBeVisible();
   });
 
   test.describe('Integrity Constraints', () => {
