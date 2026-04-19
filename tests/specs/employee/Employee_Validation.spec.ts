@@ -43,7 +43,6 @@ test.describe('Employee › Validation', () => {
   });
   
   test('Create › Missing Last Name › Required Verification', async () => {
-    test.fail(true,"สามารถสร้างข้อมูลได้โดยไม่ใส่ Lastname")
     createPage = await employeeList.openCreateForm();
     await createPage.fillForm({
       firstName: 'NoLastName'
@@ -74,7 +73,6 @@ test.describe('Employee › Validation', () => {
     });
 
     test('Create › Non-numeric Phone › System Failure', async () => {
-      test.fail(true, 'สามารถใส่ตัวหนังสือในช่อง phone ได้');
       await createPage.fillForm({
         firstName: 'PhoneTest',
         phone: 'ABC-123!'
@@ -83,7 +81,6 @@ test.describe('Employee › Validation', () => {
     });
 
     test('Create › Non-numeric ID › System Failure', async () => {
-      test.fail(true, 'สามารถใส่ตัวหนังสือในช่อง nationalId ได้');
       await createPage.fillForm({
         firstName: 'IDTest',
         nationalId: 'ID-INVALID!'
@@ -92,7 +89,6 @@ test.describe('Employee › Validation', () => {
     });
 
     test('Create › Negative Wage › System Failure', async () => {
-      test.fail(true, 'สามารถใส่ตัวเลขติดลบในช่อง dailyWage ได้');
       await createPage.fillForm({
         firstName: 'WageTest',
         dailyWage: '-100'
@@ -101,7 +97,6 @@ test.describe('Employee › Validation', () => {
     });
 
     test('Stress › Excessive Input › Stability', async () => {
-      test.fail(true, 'สามารถใส่ตัวอักษรจำนวนมากในช่อง firstname ได้');
       const longName = 'A'.repeat(150);
 
       await createPage.fillForm({
@@ -114,7 +109,6 @@ test.describe('Employee › Validation', () => {
 
   test.describe('Update Constraints', () => {
     test('Update › Non-numeric Phone › System Failure', async ({ page }) => {
-      test.fail(true, 'ตอน Edit สามารถใส่ตัวหนังสือในช่อง phone ได้');
       const uniqueId = Date.now().toString();
       const firstName = `EditVal_${uniqueId}`;
 

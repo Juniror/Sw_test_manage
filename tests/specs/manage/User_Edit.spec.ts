@@ -61,7 +61,6 @@ test.describe('Manage › User › Profile Updates', () => {
   });
 
   test('Update › Display Name › Clear Success', async ({ page }) => {
-    test.fail(true, "เมื่อ value เป็น \"\" ระบบไม่แสดงข้อความแจ้งเตือน");
     const uniqueId = Date.now();
     const initialUser = {
       username: `clear_target_${uniqueId}`,

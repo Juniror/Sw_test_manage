@@ -27,7 +27,6 @@ test.describe('Profile › Validation › Constraints', () => {
   });
 
   test('Update › Missing First Name › Native Error', async ({ page }) => {
-    test.fail(true,"เมื่อ firstname เป็น \"\" ระบบไม่แสดงข้อความแจ้งเตือน");
     await profilePage.firstNameInput.clear();
     await profilePage.saveButton.click();
 

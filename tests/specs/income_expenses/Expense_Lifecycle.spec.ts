@@ -56,7 +56,6 @@ test.describe('Financial › Expense › Lifecycle', () => {
     }
 
     test('Approval › Approve Bill Flow › Verify in History', async ({ page }) => {
-        test.fail(true, "ไม่สามารถตรววจสอบได้เนื่องจากไม่มีค่าใดๆที่เป็นค่า Unique เลย และไม่มี UUID")
 
         const { storeName } = await setupFreshBill(page);
 
@@ -77,7 +76,6 @@ test.describe('Financial › Expense › Lifecycle', () => {
     });
 
     test('Rejection › Reject Bill Flow › Verify in History', async ({ page }) => {
-        test.fail(true, "ไม่สามารถตรววจสอบได้เนื่องจากไม่มีค่าใดๆที่เป็นค่า Unique เลย และไม่มี UUID")
         const { storeName } = await setupFreshBill(page);
 
         await expenseList.navigateToPendingBills();
