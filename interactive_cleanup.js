@@ -8,7 +8,7 @@ const color = {
 (async () => {
     console.log(`\n${color.cyan}${color.bold}=== PREMIUM CLEANUP UTILITY ===${color.reset}`);
     const token = await readline.question(`${color.yellow}Enter Bearer Token:${color.reset} `);
-    
+
     const menu = {
         '1': { name: 'Sites', path: id => `/sites/${id}`, method: 'DELETE' },
         '2': { name: 'Workers', path: id => `/workers/${id}?hard=true`, method: 'DELETE' },
@@ -19,7 +19,7 @@ const color = {
     while (true) {
         console.log(`\n${color.bold}--- SELECT ACTION ---${color.reset}`);
         console.log(`${color.cyan}1:Sites | 2:Workers | 3:Users | 4:Reject | ${color.yellow}5:DELETE ALL${color.cyan} | 0:Exit${color.reset}`);
-        
+
         const choice = await readline.question(`${color.bold}Choice:${color.reset} `);
         if (choice === '0') break;
         if (choice !== '5' && !menu[choice]) continue;
@@ -31,7 +31,7 @@ const color = {
 
         for (let id = start; id <= end; id++) {
             const targets = choice === '5' ? Object.keys(menu) : [choice];
-            
+
             for (const t of targets) {
                 const { path, method, name } = menu[t];
                 try {
@@ -40,11 +40,11 @@ const color = {
                         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                         body: method === 'PUT' ? '{}' : undefined
                     });
-                    
+
                     const statusColor = res.ok ? color.green : color.red;
                     console.log(`[${color.cyan}${id}${color.reset}] ${name.padEnd(8)} | ${method.padEnd(6)} -> ${statusColor}${res.status} ${res.statusText}${color.reset}`);
-                } catch (e) { 
-                    console.log(`[${color.red}ERROR${color.reset}] ID ${id} (${name}): ${e.message}`); 
+                } catch (e) {
+                    console.log(`[${color.red}ERROR${color.reset}] ID ${id} (${name}): ${e.message}`);
                 }
             }
         }
